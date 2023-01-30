@@ -14,16 +14,7 @@ import {
   useTransitionStyles,
 } from '@floating-ui/react';
 import TooltipBasics from './Tooltip/1.basics';
-
-// function roundByDPR(value: number) {
-//   const dpr = window.devicePixelRatio || 1;
-//   return Math.round(value * dpr) / dpr;
-// }
-
-// .floating {
-//   max-width: calc(100vw - 10px);
-// }
-// The constant 10 shown in the example should be double the padding given to the shift() middleware if it’s in use.
+import ToolTipReusable from './Tooltip/2.reusable';
 
 function App() {
   return (
@@ -33,7 +24,8 @@ function App() {
       </h1>
 
       <div className="m-20 flex justify-center">
-        <TooltipBasics />
+        {/* <TooltipBasics /> */}
+        <ToolTipReusable />
       </div>
     </div>
   );
