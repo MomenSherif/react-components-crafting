@@ -27,7 +27,14 @@ export default function TooltipBasics() {
       open: isOpen,
       onOpenChange: setIsOpen,
       placement: 'top',
-      middleware: [offset(10), flip(), shift(), arrow({ element: arrowEl })],
+      middleware: [
+        offset(10),
+        flip({
+          fallbackPlacements: ['bottom', 'right'], // override default flip fallback placements
+        }),
+        shift(),
+        arrow({ element: arrowEl }),
+      ],
       whileElementsMounted: autoUpdate,
     });
 
