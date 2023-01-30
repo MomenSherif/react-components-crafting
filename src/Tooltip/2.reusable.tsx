@@ -32,6 +32,8 @@ import {
   type Placement,
 } from '@floating-ui/react';
 
+//Disabled button hack https://floating-ui.com/docs/tooltip#disabled-buttons
+
 export default function ToolTipReusable() {
   return (
     <div className="flex space-x-2">
