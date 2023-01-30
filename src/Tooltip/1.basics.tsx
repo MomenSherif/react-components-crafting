@@ -1,8 +1,12 @@
 import {
+  arrow,
   autoUpdate,
   flip,
   FloatingPortal,
+  Middleware,
+  MiddlewareData,
   offset,
+  Placement,
   safePolygon,
   shift,
   useDismiss,
@@ -12,18 +16,20 @@ import {
   useInteractions,
   useRole,
 } from '@floating-ui/react';
-import { useState } from 'react';
+import { forwardRef, useRef, useState } from 'react';
 
 export default function TooltipBasics() {
   const [isOpen, setIsOpen] = useState(false);
+  const arrowEl = useRef<HTMLDivElement>(null);
 
-  const { x, y, strategy, refs, context } = useFloating({
-    open: isOpen,
-    onOpenChange: setIsOpen,
-    placement: 'top',
-    middleware: [offset(10), flip(), shift()],
-    whileElementsMounted: autoUpdate,
-  });
+  const { x, y, strategy, refs, context, placement, middlewareData } =
+    useFloating({
+      open: isOpen,
+      onOpenChange: setIsOpen,
+      placement: 'top',
+      middleware: [offset(10), flip(), shift(), arrow({ element: arrowEl })],
+      whileElementsMounted: autoUpdate,
+    });
 
   const { getReferenceProps, getFloatingProps } = useInteractions([
     useHover(context, {
@@ -60,9 +66,41 @@ export default function TooltipBasics() {
             {...getFloatingProps()}
           >
             Tooltip element
+            <Arrow
+              ref={arrowEl}
+              arrowData={middlewareData.arrow}
+              placement={placement}
+            />
           </div>
         )}
       </FloatingPortal>
     </>
   );
 }
+
+const sides = {
+  top: 'bottom',
+  right: 'left',
+  bottom: 'top',
+  left: 'right',
+} as const;
+
+const Arrow = forwardRef<
+  HTMLDivElement,
+  { arrowData: MiddlewareData['arrow']; placement: Placement }
+>(({ arrowData, placement }, ref) => {
+  return (
+    <div
+      ref={ref}
+      id="arrow"
+      className="absolute bg-inherit w-2 h-2 rotate-45"
+      style={{
+        left: arrowData?.x != null ? `${arrowData.x}px` : '',
+        top: arrowData?.y != null ? `${arrowData?.y}px` : '',
+        right: '',
+        bottom: '',
+        [sides[placement.split('-')[0] as keyof typeof sides]]: '-4px',
+      }}
+    />
+  );
+});
