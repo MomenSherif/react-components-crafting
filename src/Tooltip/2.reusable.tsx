@@ -14,14 +14,18 @@ import {
   arrow,
   autoUpdate,
   flip,
+  FloatingDelayGroup,
   FloatingPortal,
   offset,
   safePolygon,
   shift,
+  useDelayGroup,
+  useDelayGroupContext,
   useDismiss,
   useFloating,
   useFocus,
   useHover,
+  useId,
   useInteractions,
   useMergeRefs,
   useRole,
@@ -30,7 +34,7 @@ import {
 
 export default function ToolTipReusable() {
   return (
-    <div>
+    <div className="flex space-x-2">
       <Tooltip>
         <TooltipTrigger className="bg-indigo-500 text-white px-4 py-2 rounded-md">
           Click me
@@ -42,6 +46,31 @@ export default function ToolTipReusable() {
           </TooltipContent>
         </TooltipPortal>
       </Tooltip>
+      {/* https://floating-ui.com/docs/FloatingDelayGroup */}
+      <FloatingDelayGroup delay={1000}>
+        <Tooltip>
+          <TooltipTrigger className="bg-indigo-500 text-white px-4 py-2 rounded-md">
+            Click me
+          </TooltipTrigger>
+          <TooltipPortal>
+            <TooltipContent className="bg-slate-900 text-white px-2 py-1 text-sm rounded">
+              This is a tooltip
+              <TooltipArrow />
+            </TooltipContent>
+          </TooltipPortal>
+        </Tooltip>
+        <Tooltip>
+          <TooltipTrigger className="bg-indigo-500 text-white px-4 py-2 rounded-md">
+            Click me
+          </TooltipTrigger>
+          <TooltipPortal>
+            <TooltipContent className="bg-slate-900 text-white px-2 py-1 text-sm rounded">
+              This is a tooltip
+              <TooltipArrow />
+            </TooltipContent>
+          </TooltipPortal>
+        </Tooltip>
+      </FloatingDelayGroup>
     </div>
   );
 }
@@ -49,10 +78,16 @@ export default function ToolTipReusable() {
 interface TooltipOptions {
   initialOpen?: boolean;
   placement?: Placement;
+  delay?:
+    | number
+    | Partial<{
+        open: number;
+        close: number;
+      }>;
 }
 
 export function useTooltip(options: TooltipOptions = {}) {
-  const { initialOpen = false, placement = 'top' } = options;
+  const { initialOpen = false, placement = 'top', delay } = options;
   const [isOpen, setIsOpen] = useState(initialOpen);
 
   const arrowRef = useRef<HTMLElement>(null);
@@ -65,11 +100,13 @@ export function useTooltip(options: TooltipOptions = {}) {
     whileElementsMounted: autoUpdate,
   });
 
+  const { delay: groupDelay } = useDelayGroupContext();
+
   const interactions = useInteractions([
     useHover(data.context, {
       move: false,
-      restMs: 150,
-      delay: { open: 1000 },
+      restMs: 400,
+      delay: groupDelay || delay,
       handleClose: safePolygon(),
     }),
     useFocus(data.context),
@@ -149,7 +186,11 @@ export const TooltipContent = forwardRef<
   HTMLProps<HTMLDivElement>
 >(function TooltipContent(props, propRef) {
   const context = useTooltipContext();
+  const id = useId();
+  // const { isInstantPhase, currentId } = useDelayGroupContext(); // can be used with useTransitionStyles & useTransitionStatus for animation
   const ref = useMergeRefs([context.refs.setFloating, propRef]);
+
+  useDelayGroup(context.context, { id });
 
   if (!context.isOpen) return null;
 
