@@ -15,6 +15,7 @@ import {
 } from '@floating-ui/react';
 import TooltipBasics from './Tooltip/1.basics';
 import ToolTipReusable from './Tooltip/2.reusable';
+import PopoverExample from './Popover/PopoverExample';
 
 function App() {
   return (
@@ -25,7 +26,8 @@ function App() {
 
       <div className="m-20 flex justify-center">
         {/* <TooltipBasics /> */}
-        <ToolTipReusable />
+        {/* <ToolTipReusable /> */}
+        <PopoverExample />
       </div>
     </div>
   );

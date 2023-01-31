@@ -266,27 +266,30 @@ const sides = {
   left: 'right',
 } as const;
 
-const TooltipArrow = forwardRef(function TooltipArrow(props, propRef) {
-  const context = useTooltipContext();
-  const {
-    placement,
-    middlewareData: { arrow },
-  } = context;
+const TooltipArrow = forwardRef<HTMLDivElement, HTMLProps<HTMLDivElement>>(
+  function TooltipArrow(props, propRef) {
+    const context = useTooltipContext();
+    const {
+      placement,
+      middlewareData: { arrow },
+    } = context;
 
-  const ref = useMergeRefs([context.arrowRef, propRef]);
+    const ref = useMergeRefs([context.arrowRef, propRef]);
 
-  return (
-    <div
-      ref={ref}
-      id="arrow"
-      className="absolute bg-inherit w-2 h-2 rotate-45"
-      style={{
-        left: arrow?.x != null ? `${arrow.x}px` : '',
-        top: arrow?.y != null ? `${arrow?.y}px` : '',
-        right: '',
-        bottom: '',
-        [sides[placement.split('-')[0] as keyof typeof sides]]: '-4px',
-      }}
-    />
-  );
-});
+    return (
+      <div
+        ref={ref}
+        id="arrow"
+        {...props}
+        className={`absolute bg-inherit w-2 h-2 rotate-45 ${props.className}`}
+        style={{
+          left: arrow?.x != null ? `${arrow.x}px` : '',
+          top: arrow?.y != null ? `${arrow?.y}px` : '',
+          right: '',
+          bottom: '',
+          [sides[placement.split('-')[0] as keyof typeof sides]]: '-4px',
+        }}
+      />
+    );
+  },
+);
