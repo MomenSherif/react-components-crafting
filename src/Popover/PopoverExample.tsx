@@ -1,6 +1,8 @@
 import {
   ButtonHTMLAttributes,
   cloneElement,
+  ComponentProps,
+  ComponentRef,
   createContext,
   forwardRef,
   HTMLProps,
@@ -17,6 +19,7 @@ import {
   autoUpdate,
   flip,
   FloatingFocusManager,
+  FloatingOverlay,
   FloatingPortal,
   offset,
   shift,
@@ -33,11 +36,12 @@ import {
 export default function PopoverExample() {
   return (
     <div className="flex space-x-5">
-      <Popover modal>
-        <PopoverTrigger className="bg-slate-900 px-4 py-1.5 rounded-md text-sm text-white">
+      <Popover>
+        <PopoverTrigger className="relative z-10 bg-slate-900 px-4 py-1.5 rounded-md text-sm text-white">
           Add user
         </PopoverTrigger>
         <PopoverPortal>
+          <PopoverOverlay className="bg-black/40" lockScroll />
           <PopoverContent className="bg-white shadow-lg border rounded-lg p-4">
             <PopoverHeading className="text-3xl font-bold text-center">
               Heading for popover
@@ -124,6 +128,17 @@ export const usePopoverContext = () => {
 
   return context;
 };
+
+export const PopoverOverlay = forwardRef<
+  ComponentRef<typeof FloatingOverlay>,
+  ComponentProps<typeof FloatingOverlay>
+>(function PopoverOverlay(props, ref) {
+  const context = usePopoverContext();
+
+  if (!context.isOpen) return null;
+
+  return <FloatingOverlay ref={ref} {...props} />;
+});
 
 export function Popover({
   children,

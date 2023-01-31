@@ -20,7 +20,7 @@ import PopoverExample from './Popover/PopoverExample';
 function App() {
   return (
     <div className="h-[8000px]">
-      <h1 className="text-7xl font-bold text-center bg-clip-text text-transparent bg-gradient-to-br from-indigo-500 to-teal-500">
+      <h1 className="text-7xl font-bold text-center  bg-red-500">
         Hello, World!
       </h1>
 
