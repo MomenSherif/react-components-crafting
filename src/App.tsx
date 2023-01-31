@@ -16,6 +16,7 @@ import {
 import TooltipBasics from './Tooltip/1.basics';
 import ToolTipReusable from './Tooltip/2.reusable';
 import PopoverExample from './Popover/PopoverExample';
+import DialogExample from './Dialog/DialogExample';
 
 function App() {
   return (
@@ -27,7 +28,8 @@ function App() {
       <div className="m-20 flex justify-center">
         {/* <TooltipBasics /> */}
         {/* <ToolTipReusable /> */}
-        <PopoverExample />
+        {/* <PopoverExample /> */}
+        <DialogExample />
       </div>
     </div>
   );
