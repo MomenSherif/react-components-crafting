@@ -41,17 +41,17 @@ export default function DialogExample() {
 
         <DialogPortal>
           <DialogOverlay
-            className="z-20 bg-black/50 flex flex-col items-center overflow-y-auto"
+            className="z-20 bg-black/50 flex flex-col items-center p-8 "
             lockScroll
           >
             <DialogContent
-              className="relative bg-white p-4 m-8  shadow-lg rounded-lg
-              max-w-md "
+              className="relative bg-white p-4  shadow-lg rounded-lg
+              max-w-md max-h-full flex flex-col"
             >
               <DialogHeading className="text-3xl font-bold text-center">
                 Heading for popover
               </DialogHeading>
-              <DialogDescription className="flex-1 text-slate-600 mt-4 ">
+              <DialogDescription className="flex-1 text-slate-600 mt-4 overflow-y-auto">
                 Lorem ipsum dolor sit amet consectetur adipisicing elit. Unde,
                 ex! Lorem ipsum dolor sit amet consectetur, adipisicing elit.
                 Quo nam id, voluptate totam esse voluptates labore ratione sunt
