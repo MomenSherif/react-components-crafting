@@ -37,6 +37,23 @@ import {
 export default function ToolTipReusable() {
   return (
     <div className="flex space-x-2">
+      <Tooltip delay={400}>
+        <div className="flex items-center space-x-3">
+          <TooltipAnchor>
+            <a href="www.google.com">This is user</a>
+          </TooltipAnchor>
+          <TooltipTrigger className="bg-indigo-500 text-white px-4 py-2 rounded-md">
+            x
+          </TooltipTrigger>
+        </div>
+        <TooltipPortal>
+          <TooltipContent className="bg-slate-900 text-white px-2 py-1 text-sm rounded">
+            This is a tooltip
+            <TooltipArrow />
+          </TooltipContent>
+        </TooltipPortal>
+      </Tooltip>
+
       <Tooltip>
         <TooltipTrigger className="bg-indigo-500 text-white px-4 py-2 rounded-md">
           Click me
@@ -48,6 +65,7 @@ export default function ToolTipReusable() {
           </TooltipContent>
         </TooltipPortal>
       </Tooltip>
+
       {/* https://floating-ui.com/docs/FloatingDelayGroup */}
       <FloatingDelayGroup delay={1000}>
         <Tooltip>
@@ -107,8 +125,8 @@ export function useTooltip(options: TooltipOptions = {}) {
   const interactions = useInteractions([
     useHover(data.context, {
       move: false,
-      restMs: 400,
-      delay: groupDelay || delay,
+      restMs: 150,
+      delay: groupDelay ?? delay,
       handleClose: safePolygon(),
     }),
     useFocus(data.context),
@@ -180,6 +198,34 @@ export const TooltipTrigger = forwardRef<
     >
       {children}
     </button>
+  );
+});
+
+export const TooltipAnchor = forwardRef<
+  HTMLDivElement,
+  HTMLProps<HTMLDivElement> & { asChild?: boolean }
+>(function TooltipAnchor({ children, asChild = false, ...props }, propRef) {
+  const context = useTooltipContext();
+  const childrenRef = (children as any).ref;
+  const ref = useMergeRefs([
+    context.refs.setPositionReference,
+    propRef,
+    childrenRef,
+  ]);
+
+  if (asChild && isValidElement(children)) {
+    return cloneElement(children, {
+      ref,
+      ...props,
+      ...children.props,
+      'data-state': context.isOpen ? 'open' : 'closed',
+    });
+  }
+
+  return (
+    <div ref={ref} data-state={context.isOpen ? 'open' : 'closed'} {...props}>
+      {children}
+    </div>
   );
 });
 
