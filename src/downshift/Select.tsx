@@ -30,7 +30,7 @@ function stateReducer(
   const { changes, type } = actionAndChanges;
   switch (type) {
     case useSelect.stateChangeTypes.ToggleButtonKeyDownEnter:
-    case useSelect.stateChangeTypes.ToggleButtonKeyDownEscape:
+    case useSelect.stateChangeTypes.ToggleButtonKeyDownSpaceButton:
     case useSelect.stateChangeTypes.ItemClick:
       return {
         ...changes,
@@ -112,12 +112,21 @@ export function SelectDownshiftMultiple() {
                 index,
                 'aria-selected': selectedItems.includes(item),
               })}
-              className={`px-3 py-2  flex flex-col ${
+              className={`px-3 py-2 flex items-start ${
                 highlightedIndex === index ? 'bg-gray-100' : ''
               } ${selectedItems.includes(item) ? 'font-medium' : ''}`}
             >
-              <span>{item.title}</span>
-              <span className="text-sm text-gray-700">{item.author}</span>
+              <input
+                type="checkbox"
+                className="h-3 w-3 mt-1 mr-2"
+                checked={selectedItems.includes(item)}
+                value={item.author}
+                onChange={() => {}}
+              />
+              <div className="flex flex-col">
+                <span>{item.title}</span>
+                <span className="text-sm text-gray-700">{item.author}</span>
+              </div>
             </li>
           ))}
       </ul>
