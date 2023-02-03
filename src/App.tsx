@@ -17,7 +17,7 @@ import TooltipBasics from './Tooltip/1.basics';
 import ToolTipReusable from './Tooltip/2.reusable';
 import PopoverExample from './Popover/PopoverExample';
 import DialogExample from './Dialog/DialogExample';
-import SelectDownshift from './downshift/Select';
+import SelectDownshift, { SelectDownshiftMultiple } from './downshift/Select';
 
 function App() {
   return (
@@ -29,7 +29,8 @@ function App() {
         {/* <ToolTipReusable /> */}
         {/* <PopoverExample /> */}
         {/* <DialogExample /> */}
-        <SelectDownshift />
+        {/* <SelectDownshift /> */}
+        <SelectDownshiftMultiple />
       </div>
     </div>
   );
