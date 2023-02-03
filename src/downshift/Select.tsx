@@ -1,4 +1,5 @@
 import { useSelect } from 'downshift';
+import { useState } from 'react';
 
 const books = [
   { author: 'Harper Lee', title: 'To Kill a Mockingbird' },
@@ -12,15 +13,20 @@ const books = [
   { author: 'Lev Tolstoy', title: 'Anna Karenina' },
   { author: 'Fyodor Dostoevsky', title: 'Crime and Punishment' },
 ];
+type Book = typeof books[number];
 
-const itemToString = (item: typeof books[number] | null) => {
+const itemToString = (item: Book | null) => {
   return item?.title || '';
 };
 
 export default function SelectDownshift() {
+  const [selectedItem, setSelectedItem] = useState<Book | null | undefined>(
+    null,
+  );
+
   const {
     isOpen,
-    selectedItem,
+    // selectedItem,
     getToggleButtonProps,
     getLabelProps,
     getMenuProps,
@@ -29,6 +35,10 @@ export default function SelectDownshift() {
   } = useSelect({
     items: books,
     itemToString,
+    selectedItem,
+    onSelectedItemChange: ({ selectedItem }) => {
+      setSelectedItem(selectedItem);
+    },
   });
 
   return (
