@@ -17,19 +17,19 @@ import TooltipBasics from './Tooltip/1.basics';
 import ToolTipReusable from './Tooltip/2.reusable';
 import PopoverExample from './Popover/PopoverExample';
 import DialogExample from './Dialog/DialogExample';
+import SelectDownshift from './downshift/Select';
 
 function App() {
   return (
     <div className="h-[8000px]">
-      <h1 className="text-7xl font-bold text-center  bg-red-500">
-        Hello, World!
-      </h1>
+      <h1 className="text-7xl font-bold text-center">Hello, World!</h1>
 
       <div className="m-20 flex justify-center">
         {/* <TooltipBasics /> */}
         {/* <ToolTipReusable /> */}
         {/* <PopoverExample /> */}
-        <DialogExample />
+        {/* <DialogExample /> */}
+        <SelectDownshift />
       </div>
     </div>
   );
