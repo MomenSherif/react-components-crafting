@@ -23,6 +23,27 @@ export default function SingleDatePicker() {
           <p>Please pick a day.</p>
         )
       }
+      // required
+      // disabled
+      captionLayout="dropdown"
+      fromYear={2023}
+      toYear={2029}
+
+      /**
+       * https://react-day-picker.js.org/basics/navigation
+       * DayPicker displays the month of the current day.
+       * defaultMonth={new Date(1996, 4)} 1996-05 | defaultMonth={subMonths(new Date(), 1)}
+       *
+       * - controlled month
+       * month={subMonths(new Date(), 1)}
+       * onMonthChange={(month) => setMonth(month)}
+       *
+       * disableNavigation
+       * fromDate={new Date(2023, 0, 10)} // 10/1/2023 The earliest day to start the month navigation.
+       * toDate={} // The latest day to end the month navigation.
+       * fromYear={2023} // The earliest year to start the month navigation.
+       * toYear={2029} // The latest year to end the month navigation.
+       */
     />
   );
 }
