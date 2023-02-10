@@ -19,6 +19,7 @@ import PopoverExample from './Popover/PopoverExample';
 import DialogExample from './Dialog/DialogExample';
 import SelectDownshift, { SelectDownshiftMultiple } from './downshift/Select';
 import SingleDatePicker, {
+  CustomComponentsDatePickerExample,
   DatePickerCustomized,
   ModifiersDatePickerExample,
   MultipleDatePicker,
@@ -41,7 +42,8 @@ function App() {
         {/* <DatePickerCustomized /> */}
         {/* <MultipleDatePicker /> */}
         {/* <RangeDatePicker /> */}
-        <ModifiersDatePickerExample />
+        {/* <ModifiersDatePickerExample /> */}
+        <CustomComponentsDatePickerExample />
       </div>
     </div>
   );

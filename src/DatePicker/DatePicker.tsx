@@ -6,10 +6,20 @@ import {
   isFirstDayOfMonth,
   isLastDayOfMonth,
   addDays,
+  addMonths,
 } from 'date-fns';
 import { ar } from 'date-fns/locale';
 import { useState } from 'react';
-import { DateRange, DayClickEventHandler, DayPicker } from 'react-day-picker';
+import {
+  CaptionProps,
+  DateRange,
+  DayClickEventHandler,
+  DayContent,
+  DayContentProps,
+  DayPicker,
+  useDayPicker,
+  useNavigation,
+} from 'react-day-picker';
 import 'react-day-picker/dist/style.css';
 
 export default function SingleDatePicker() {
@@ -207,3 +217,56 @@ export function ModifiersDatePickerExample() {
     />
   );
 }
+
+// https://react-day-picker.js.org/guides/custom-components
+// https://react-day-picker.js.org/api/interfaces/CustomComponents
+export function CustomComponentsDatePickerExample() {
+  const [selected, setSelected] = useState<Date>();
+  return (
+    <DayPicker
+      mode="single"
+      selected={selected}
+      onSelect={date => setSelected(date)}
+      classNames={{ day_selected: 'bg-blue-500 [&:not(:hover)]:text-white' }}
+      components={{
+        Caption: CustomCaption,
+        DayContent: CustomDayContent,
+      }}
+    />
+  );
+}
+
+const CustomCaption = (props: CaptionProps) => {
+  const { goToMonth, nextMonth, previousMonth, currentMonth } = useNavigation();
+  return (
+    <div className="flex justify-between items-center">
+      <span className="text-slate-900 text-lg font-medium relative after:absolute after:top-full after:left-0 after:mt-px after:w-10 after:h-0.5 after:bg-indigo-600">
+        {format(currentMonth, 'MMM yyy')}
+      </span>
+      <div className="flex items-center space-x-2">
+        <button
+          disabled={!previousMonth}
+          onClick={() => previousMonth && goToMonth(previousMonth)}
+          className="bg-indigo-600 text-white px-2 py-1 rounded hover:bg-indigo-700"
+        >
+          Previous
+        </button>
+        <button
+          disabled={!nextMonth}
+          onClick={() => nextMonth && goToMonth(nextMonth)}
+          className="bg-indigo-600 text-white px-2 py-1 rounded hover:bg-indigo-700"
+        >
+          Next
+        </button>
+      </div>
+    </div>
+  );
+};
+
+const CustomDayContent = (props: DayContentProps) => {
+  return (
+    <time dateTime={format(props.date, 'yyy-MM-dd')}>
+      <DayContent {...props} />
+    </time>
+  );
+};
