@@ -1,6 +1,14 @@
-import { format, formatISO } from 'date-fns';
+import {
+  format,
+  formatISO,
+  startOfMonth,
+  endOfMonth,
+  isFirstDayOfMonth,
+  isLastDayOfMonth,
+  addDays,
+} from 'date-fns';
 import { useState } from 'react';
-import { DateRange, DayPicker } from 'react-day-picker';
+import { DateRange, DayClickEventHandler, DayPicker } from 'react-day-picker';
 import 'react-day-picker/dist/style.css';
 
 export default function SingleDatePicker() {
@@ -122,6 +130,60 @@ export function RangeDatePicker() {
             {format(range.from, 'PPP')}{' '}
             {range.to ? `- ${format(range.to, 'PPP')}` : ''}
           </p>
+        )
+      }
+    />
+  );
+}
+
+// Custom selection logic with (onDayClick) https://react-day-picker.js.org/basics/selecting-days#custom-selections
+
+// Modifiers matchers https://react-day-picker.js.org/api/types/matcher
+export function ModifiersDatePickerExample() {
+  const [selected, setSelected] = useState<Date>();
+
+  const handleDayClick: DayClickEventHandler = (day, modifiers) => {
+    // modifiers: {today?: true, selected?: true}
+    console.log(day, modifiers);
+  };
+
+  return (
+    <DayPicker
+      mode="single"
+      selected={selected} // selected modifier
+      // disabled={new Date()} // single modifier
+      // disabled={[ // array of modifiers
+      //   new Date(),
+      //   { from: addDays(new Date(), 5), to: addDays(new Date(), 10) },
+      // ]}
+      // disabled={(date) => { // apply disable modifiers for first and last day of each month
+      //   return isFirstDayOfMonth(date) || isLastDayOfMonth(date);
+      // }}
+      // disabled={{ // Interval
+      //   before: new Date(), // disable past dates
+      //   // after: new Date(), // disable future dates
+      // }}
+      // disabled={{
+      //   // Range
+      //   from: new Date(),
+      //   to: addDays(new Date(), 10),
+      // }}
+
+      // hidden={new Date()} // The hidden modifier removes the day from the calendar.
+
+      modifiers={{ booked: { from: new Date(), to: addDays(new Date(), 5) } }} // custom modifiers -> will be added to date handlers
+      modifiersClassNames={{
+        booked: 'border border-gray-400 border-dashed',
+      }}
+      // modifiersStyles={{}}
+      onSelect={date => setSelected(date)}
+      onDayClick={handleDayClick}
+      classNames={{ day_selected: 'bg-blue-500 [&:not(:hover)]:text-white' }}
+      footer={
+        selected ? (
+          <p>You picked {format(selected, 'PP')}</p>
+        ) : (
+          <p>Please pick a day.</p>
         )
       }
     />
