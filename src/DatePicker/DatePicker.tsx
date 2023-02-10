@@ -47,3 +47,25 @@ export default function SingleDatePicker() {
     />
   );
 }
+
+// https://react-day-picker.js.org/basics/customization
+export function DatePickerCustomized() {
+  const [selected, setSelected] = useState<Date>();
+  return (
+    <DayPicker
+      className="w-fit bg-slate-900 text-white p-4 rounded-lg shadow-lg [--rdp-background-color:theme(colors.slate.700/30)]
+      [--rdp-accent-color:theme(colors.indigo.600/50)]"
+      classNames={{
+        day_selected: 'bg-indigo-600/50',
+      }}
+      mode="single"
+      selected={selected}
+      onSelect={setSelected}
+      // numberOfMonths={2}
+      // pagedNavigation //When rendering multiple months, use pagedNavigation to navigate the number of months per time.
+      showOutsideDays
+      fixedWeeks
+      showWeekNumber
+    />
+  );
+}
