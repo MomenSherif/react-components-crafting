@@ -20,6 +20,7 @@ import DialogExample from './Dialog/DialogExample';
 import SelectDownshift, { SelectDownshiftMultiple } from './downshift/Select';
 import SingleDatePicker, {
   DatePickerCustomized,
+  MultipleDatePicker,
 } from './DatePicker/DatePicker';
 
 function App() {
@@ -35,7 +36,8 @@ function App() {
         {/* <SelectDownshift /> */}
         {/* <SelectDownshiftMultiple /> */}
         {/* <SingleDatePicker /> */}
-        <DatePickerCustomized />
+        {/* <DatePickerCustomized /> */}
+        <MultipleDatePicker />
       </div>
     </div>
   );

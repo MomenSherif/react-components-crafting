@@ -69,3 +69,29 @@ export function DatePickerCustomized() {
     />
   );
 }
+
+export function MultipleDatePicker() {
+  const [days, setDays] = useState<Date[] | undefined>([]);
+
+  return (
+    <DayPicker
+      mode="multiple"
+      min={1}
+      max={7}
+      selected={days}
+      onSelect={setDays}
+      className="w-fit bg-slate-900 text-white p-4 rounded-lg shadow-lg [--rdp-background-color:theme(colors.slate.700/30)]
+  [--rdp-accent-color:theme(colors.indigo.600/50)]"
+      classNames={{
+        day_selected: 'bg-indigo-600/50',
+      }}
+      footer={
+        days && days?.length > 0 ? (
+          <p>You selected {days.length} day(s).</p>
+        ) : (
+          <p>Please pick one or more day.</p>
+        )
+      }
+    />
+  );
+}
