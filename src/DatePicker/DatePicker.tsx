@@ -7,6 +7,7 @@ import {
   isLastDayOfMonth,
   addDays,
 } from 'date-fns';
+import { ar } from 'date-fns/locale';
 import { useState } from 'react';
 import { DateRange, DayClickEventHandler, DayPicker } from 'react-day-picker';
 import 'react-day-picker/dist/style.css';
@@ -147,9 +148,24 @@ export function ModifiersDatePickerExample() {
     console.log(day, modifiers);
   };
 
+  const NU_LOCALE = 'ar-u-nu-arab';
+
   return (
     <DayPicker
       mode="single"
+      dir="rtl"
+      locale={ar}
+      formatters={{
+        formatDay: day => day.getDate().toLocaleString(NU_LOCALE),
+        formatCaption: (date, options) => {
+          const month = format(date, 'LLLL', { locale: options?.locale });
+          const year = date
+            .getFullYear()
+            .toLocaleString(NU_LOCALE, { useGrouping: false });
+
+          return `${month} ${year}`;
+        },
+      }} // custom formatters
       selected={selected} // selected modifier
       // disabled={new Date()} // single modifier
       // disabled={[ // array of modifiers
@@ -179,6 +195,8 @@ export function ModifiersDatePickerExample() {
       onSelect={date => setSelected(date)}
       onDayClick={handleDayClick}
       classNames={{ day_selected: 'bg-blue-500 [&:not(:hover)]:text-white' }}
+      // ISOWeek
+      showOutsideDays
       footer={
         selected ? (
           <p>You picked {format(selected, 'PP')}</p>
