@@ -1,6 +1,6 @@
 import { format, formatISO } from 'date-fns';
 import { useState } from 'react';
-import { DayPicker } from 'react-day-picker';
+import { DateRange, DayPicker } from 'react-day-picker';
 import 'react-day-picker/dist/style.css';
 
 export default function SingleDatePicker() {
@@ -90,6 +90,38 @@ export function MultipleDatePicker() {
           <p>You selected {days.length} day(s).</p>
         ) : (
           <p>Please pick one or more day.</p>
+        )
+      }
+    />
+  );
+}
+
+export function RangeDatePicker() {
+  const [range, setRange] = useState<DateRange | undefined>({
+    from: undefined,
+    to: undefined,
+  });
+
+  return (
+    <DayPicker
+      mode="range"
+      selected={range}
+      onSelect={setRange}
+      // min={3}
+      // max={6}
+      className="w-fit bg-slate-900 text-white p-4 rounded-lg shadow-lg [--rdp-background-color:theme(colors.slate.700/30)]
+  [--rdp-accent-color:theme(colors.indigo.600/50)]"
+      classNames={{
+        day_selected: 'bg-indigo-600/50',
+      }}
+      footer={
+        !range?.from ? (
+          <p>Please select the first day.</p>
+        ) : (
+          <p>
+            {format(range.from, 'PPP')}{' '}
+            {range.to ? `- ${format(range.to, 'PPP')}` : ''}
+          </p>
         )
       }
     />
