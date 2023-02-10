@@ -18,6 +18,7 @@ import ToolTipReusable from './Tooltip/2.reusable';
 import PopoverExample from './Popover/PopoverExample';
 import DialogExample from './Dialog/DialogExample';
 import SelectDownshift, { SelectDownshiftMultiple } from './downshift/Select';
+import SingleDatePicker from './DatePicker/DatePicker';
 
 function App() {
   return (
@@ -30,7 +31,8 @@ function App() {
         {/* <PopoverExample /> */}
         {/* <DialogExample /> */}
         {/* <SelectDownshift /> */}
-        <SelectDownshiftMultiple />
+        {/* <SelectDownshiftMultiple /> */}
+        <SingleDatePicker />
       </div>
     </div>
   );
