@@ -7,6 +7,8 @@ import {
   isLastDayOfMonth,
   addDays,
   addMonths,
+  parse,
+  isValid,
 } from 'date-fns';
 import { ar } from 'date-fns/locale';
 import { useState } from 'react';
@@ -21,6 +23,14 @@ import {
   useNavigation,
 } from 'react-day-picker';
 import 'react-day-picker/dist/style.css';
+import {
+  Popover,
+  PopoverAnchor,
+  PopoverArrow,
+  PopoverContent,
+  PopoverOverlay,
+  PopoverTrigger,
+} from '../Popover/PopoverExample';
 
 export default function SingleDatePicker() {
   const [selected, setSelected] = useState<Date>();
@@ -270,3 +280,70 @@ const CustomDayContent = (props: DayContentProps) => {
     </time>
   );
 };
+
+// https://react-day-picker.js.org/guides/input-fields
+export function DatePickerWithInputExample() {
+  const [selected, setSelected] = useState<Date>();
+  const [inputValue, setInputValue] = useState('');
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <Popover modal open={isOpen} onOpenChange={setIsOpen}>
+      <PopoverAnchor>
+        <div className="relative">
+          <input
+            type="text"
+            className="px-3 py-1.5 pr-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500"
+            value={inputValue}
+            onChange={e => {
+              setInputValue(e.target.value);
+              const date = parse(e.currentTarget.value, 'y-MM-dd', new Date());
+              if (isValid(date)) {
+                setSelected(date);
+              } else {
+                setSelected(undefined);
+              }
+            }}
+            // we can onBlur validate date entered
+          />
+          <PopoverTrigger
+            type="button"
+            aria-label="Pick a date"
+            className="absolute right-0 top-0 flex justify-center items-center  rounded-md h-full px-2
+          hover:bg-gray-200/40 border border-transparent focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500"
+          >
+            <span role="img" aria-label="calendar icon">
+              📅
+            </span>
+          </PopoverTrigger>
+        </div>
+      </PopoverAnchor>
+      <PopoverOverlay lockScroll />
+      <PopoverContent>
+        <PopoverArrow className="!bg-slate-900 w-5 h-5 rotate-45 m-1" />
+        <DayPicker
+          mode="single"
+          numberOfMonths={2}
+          pagedNavigation
+          selected={selected}
+          defaultMonth={selected}
+          onSelect={date => {
+            setSelected(date);
+            if (date) {
+              setInputValue(format(date, 'y-MM-dd'));
+              setIsOpen(false);
+            } else {
+              setInputValue('');
+            }
+          }}
+          initialFocus
+          className="m-0 w-fit bg-slate-900 text-white p-4 rounded-lg shadow-lg [--rdp-background-color:theme(colors.slate.700/30)]
+  [--rdp-accent-color:theme(colors.indigo.600/50)]"
+          classNames={{
+            day_selected: 'bg-indigo-600/50',
+          }}
+        />
+      </PopoverContent>
+    </Popover>
+  );
+}

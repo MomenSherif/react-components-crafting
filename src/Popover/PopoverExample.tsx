@@ -66,12 +66,18 @@ interface PopoverOptions {
   initialOpen?: boolean;
   placement?: Placement;
   modal?: boolean;
-  // open?: boolean; // Update components to support both controlled/uncontrolled state
-  // onOpenChange: (open: boolean) => void;
+  open?: boolean; // Update components to support both controlled/uncontrolled state
+  onOpenChange?: (open: boolean) => void;
 }
 
 export function usePopover(options: PopoverOptions = {}) {
-  const { initialOpen = false, placement = 'bottom', modal = false } = options;
+  const {
+    initialOpen = false,
+    placement = 'bottom',
+    modal = false,
+    open,
+    onOpenChange,
+  } = options;
   const [isOpen, setIsOpen] = useState(initialOpen);
   const [labelId, setLabelId] = useState<string | undefined>();
   const [descriptionId, setDescriptionId] = useState<string | undefined>();
@@ -79,8 +85,8 @@ export function usePopover(options: PopoverOptions = {}) {
   const arrowRef = useRef<HTMLElement>(null);
 
   const data = useFloating({
-    open: isOpen,
-    onOpenChange: setIsOpen,
+    open: open ?? isOpen,
+    onOpenChange: onOpenChange ?? setIsOpen,
     placement,
     middleware: [
       offset(5),
@@ -101,8 +107,8 @@ export function usePopover(options: PopoverOptions = {}) {
 
   return useMemo(
     () => ({
-      isOpen,
-      setIsOpen,
+      isOpen: open ?? isOpen,
+      setIsOpen: onOpenChange ?? setIsOpen,
       arrowRef,
       modal,
       labelId,
@@ -112,7 +118,16 @@ export function usePopover(options: PopoverOptions = {}) {
       ...data,
       ...interactions,
     }),
-    [isOpen, modal, labelId, descriptionId, data, interactions],
+    [
+      isOpen,
+      open,
+      onOpenChange,
+      modal,
+      labelId,
+      descriptionId,
+      data,
+      interactions,
+    ],
   );
 }
 
@@ -249,33 +264,34 @@ const sides = {
   left: 'right',
 } as const;
 
-const PopoverArrow = forwardRef<HTMLDivElement, HTMLProps<HTMLDivElement>>(
-  function PopoverArrow(props, propRef) {
-    const context = usePopoverContext();
-    const {
-      placement,
-      middlewareData: { arrow },
-    } = context;
+export const PopoverArrow = forwardRef<
+  HTMLDivElement,
+  HTMLProps<HTMLDivElement>
+>(function PopoverArrow(props, propRef) {
+  const context = usePopoverContext();
+  const {
+    placement,
+    middlewareData: { arrow },
+  } = context;
 
-    const ref = useMergeRefs([context.arrowRef, propRef]);
+  const ref = useMergeRefs([context.arrowRef, propRef]);
 
-    return (
-      <div
-        ref={ref}
-        id="arrow"
-        {...props}
-        className={`absolute bg-inherit w-2 h-2 rotate-45 ${props.className}`}
-        style={{
-          left: arrow?.x != null ? `${arrow.x}px` : '',
-          top: arrow?.y != null ? `${arrow?.y}px` : '',
-          right: '',
-          bottom: '',
-          [sides[placement.split('-')[0] as keyof typeof sides]]: '-4px',
-        }}
-      />
-    );
-  },
-);
+  return (
+    <div
+      ref={ref}
+      id="arrow"
+      {...props}
+      className={`absolute bg-inherit w-2 h-2 rotate-45 ${props.className}`}
+      style={{
+        left: arrow?.x != null ? `${arrow.x}px` : '',
+        top: arrow?.y != null ? `${arrow?.y}px` : '',
+        right: '',
+        bottom: '',
+        [sides[placement.split('-')[0] as keyof typeof sides]]: '-4px',
+      }}
+    />
+  );
+});
 
 // Only sets `aria-labelledby` on the Popover root element
 // if this component is mounted inside it.

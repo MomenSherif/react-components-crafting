@@ -21,6 +21,7 @@ import SelectDownshift, { SelectDownshiftMultiple } from './downshift/Select';
 import SingleDatePicker, {
   CustomComponentsDatePickerExample,
   DatePickerCustomized,
+  DatePickerWithInputExample,
   ModifiersDatePickerExample,
   MultipleDatePicker,
   RangeDatePicker,
@@ -43,7 +44,8 @@ function App() {
         {/* <MultipleDatePicker /> */}
         {/* <RangeDatePicker /> */}
         {/* <ModifiersDatePickerExample /> */}
-        <CustomComponentsDatePickerExample />
+        {/* <CustomComponentsDatePickerExample /> */}
+        <DatePickerWithInputExample />
       </div>
     </div>
   );
