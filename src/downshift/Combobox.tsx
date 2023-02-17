@@ -28,6 +28,9 @@ type Book = typeof books[number];
 
 export default function SingleComboBox() {
   const [items, setItems] = useState(books);
+  const [selectedItem, setSelectedItem] = useState<Book | null | undefined>(
+    null,
+  );
 
   const {
     isOpen,
@@ -37,15 +40,18 @@ export default function SingleComboBox() {
     getInputProps,
     highlightedIndex,
     getItemProps,
-    selectedItem,
+    inputValue,
+    setInputValue,
+    // selectedItem,
   } = useCombobox({
     onInputValueChange: ({ inputValue }) =>
       setItems(books.filter(getBooksFilter(inputValue))),
     items,
     itemToString: item => item?.title || '',
+    selectedItem,
+    onSelectedItemChange: ({ selectedItem: newSelectedItem }) =>
+      setSelectedItem(newSelectedItem),
   });
-
-  console.log(selectedItem);
 
   return (
     <div className="relative w-72">
@@ -57,7 +63,18 @@ export default function SingleComboBox() {
           <input
             placeholder="Best book ever"
             className="w-full px-3 py-2 pr-10 rounded-md border border-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
-            {...getInputProps()}
+            {...getInputProps({
+              onBlur() {
+                if (!selectedItem) return;
+                // clear combobox value, if no search value
+                if (!inputValue) {
+                  setSelectedItem(null);
+                  // reset input value, if not empty & we have selected value
+                } else if (selectedItem.title !== inputValue) {
+                  setInputValue(selectedItem.title);
+                }
+              },
+            })}
           />
           <button
             aria-label="toggle menu"
@@ -71,7 +88,9 @@ export default function SingleComboBox() {
       </div>
 
       <ul
-        className="absolute w-full bg-white mt-1 shadow-lg py-1 divide-y divide-gray-100"
+        className={`absolute w-full bg-white mt-1 rounded-md shadow-xl py-1 divide-y divide-gray-100 ${
+          isOpen && items.length > 0 ? '' : 'hidden'
+        }`}
         {...getMenuProps()}
       >
         {isOpen &&
