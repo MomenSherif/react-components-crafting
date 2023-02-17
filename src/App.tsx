@@ -26,6 +26,7 @@ import SingleDatePicker, {
   MultipleDatePicker,
   RangeDatePicker,
 } from './DatePicker/DatePicker';
+import SingleComboBox from './downshift/Combobox';
 
 function App() {
   return (
@@ -38,6 +39,7 @@ function App() {
         {/* <PopoverExample /> */}
         {/* <DialogExample /> */}
         {/* <SelectDownshift /> */}
+        <SingleComboBox />
         {/* <SelectDownshiftMultiple /> */}
         {/* <SingleDatePicker /> */}
         {/* <DatePickerCustomized /> */}
@@ -45,7 +47,7 @@ function App() {
         {/* <RangeDatePicker /> */}
         {/* <ModifiersDatePickerExample /> */}
         {/* <CustomComponentsDatePickerExample /> */}
-        <DatePickerWithInputExample />
+        {/* <DatePickerWithInputExample /> */}
       </div>
     </div>
   );
