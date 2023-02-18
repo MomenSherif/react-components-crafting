@@ -65,6 +65,7 @@ export default function SingleComboBox() {
             className="w-full px-3 py-2 pr-10 rounded-md border border-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
             {...getInputProps({
               onBlur() {
+                // Can be done in stateReducer
                 if (!selectedItem) return;
                 // clear combobox value, if no search value
                 if (!inputValue) {
@@ -110,3 +111,5 @@ export default function SingleComboBox() {
     </div>
   );
 }
+
+// Multiselect combobox https://www.downshift-js.com/use-combobox/#basic-multiple-selection
