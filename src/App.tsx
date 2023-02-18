@@ -30,6 +30,7 @@ import SingleComboBox from './downshift/Combobox';
 import BasicTable from './Table/1-BasicTable';
 import TableColumnGrouping from './Table/2-TableColumnGrouping';
 import TablePagination from './Table/3-TablePagination';
+import TableServerSidePagination from './Table/4-TableServerSidePagination';
 
 function App() {
   return (
@@ -53,7 +54,8 @@ function App() {
         {/* <DatePickerWithInputExample /> */}
         {/* <BasicTable /> */}
         {/* <TableColumnGrouping /> */}
-        <TablePagination />
+        {/* <TablePagination /> */}
+        <TableServerSidePagination />
       </div>
     </div>
   );
