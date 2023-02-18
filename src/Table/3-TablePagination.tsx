@@ -12,6 +12,7 @@ import {
   flexRender,
   getCoreRowModel,
   getPaginationRowModel,
+  PaginationState,
   useReactTable,
   VisibilityState,
 } from '@tanstack/react-table';
@@ -30,7 +31,7 @@ type Person = {
   progress: number;
 };
 
-const data: Person[] = Array.from({ length: 200 }).map(() => ({
+const data: Person[] = Array.from({ length: 169 }).map(() => ({
   firstName: randFirstName(),
   lastName: randLastName(),
   paragraph: randLines(),
@@ -97,6 +98,10 @@ const columns: ColumnDef<Person, unknown>[] = [
 export default function TablePagination() {
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [columnOrder, setColumnOrder] = useState<ColumnOrderState>([]);
+  const [pagination, setPagination] = useState<PaginationState>({
+    pageIndex: 0,
+    pageSize: 5,
+  });
 
   const table = useReactTable({
     data,
@@ -104,14 +109,14 @@ export default function TablePagination() {
     state: {
       columnVisibility,
       columnOrder,
+      pagination,
     },
     onColumnVisibilityChange: setColumnVisibility,
     onColumnOrderChange: setColumnOrder,
+    onPaginationChange: setPagination,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
   });
-
-  console.log(table.getState());
 
   return (
     <div className="w-full flex flex-col space-y-2 items-start">
@@ -270,7 +275,7 @@ const Pagination = ({
 
   return (
     <div className="flex items-center justify-between bg-white px-4 py-3 sm:px-6">
-      <div className="flex flex-1 justify-between sm:hidden">
+      <div className="flex flex-1 justify-between md:hidden">
         <button
           disabled={!canPrev}
           onClick={previousPage}
@@ -287,7 +292,7 @@ const Pagination = ({
         </button>
       </div>
 
-      <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
+      <div className="hidden md:flex md:flex-1 md:items-center md:justify-between">
         <div>
           <p className="text-sm text-gray-700">
             Showing{' '}
