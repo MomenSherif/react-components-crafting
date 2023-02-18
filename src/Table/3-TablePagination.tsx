@@ -11,11 +11,14 @@ import {
   createColumnHelper,
   flexRender,
   getCoreRowModel,
+  getPaginationRowModel,
   useReactTable,
   VisibilityState,
 } from '@tanstack/react-table';
 import { useState } from 'react';
+import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
 import shuffle from '../utils/shuffle';
+import usePagination from '../hooks/usePagination';
 
 type Person = {
   firstName: string;
@@ -27,7 +30,7 @@ type Person = {
   progress: number;
 };
 
-const data: Person[] = Array.from({ length: 20 }).map(() => ({
+const data: Person[] = Array.from({ length: 200 }).map(() => ({
   firstName: randFirstName(),
   lastName: randLastName(),
   paragraph: randLines(),
@@ -91,16 +94,8 @@ const columns: ColumnDef<Person, unknown>[] = [
   }),
 ];
 
-export default function TableColumnGrouping() {
-  /**
-   * Record<sting, boolean>
-   * { firstName: false }
-   */
+export default function TablePagination() {
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
-  /**
-   * string[]
-   * ['lastName', 'firstName']
-   */
   const [columnOrder, setColumnOrder] = useState<ColumnOrderState>([]);
 
   const table = useReactTable({
@@ -113,6 +108,7 @@ export default function TableColumnGrouping() {
     onColumnVisibilityChange: setColumnVisibility,
     onColumnOrderChange: setColumnOrder,
     getCoreRowModel: getCoreRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
   });
 
   console.log(table.getState());
@@ -227,6 +223,138 @@ export default function TableColumnGrouping() {
           </tfoot>
         </table>
       </div>
+      <div className="w-full">
+        {/* table.getPageOptions() | table.getPageCount() */}
+        <Pagination
+          totalCount={table.options.data.length} // client side
+          pageSize={table.getState().pagination.pageSize}
+          pageIndex={table.getState().pagination.pageIndex}
+          goToPage={page => table.setPageIndex(page)}
+          canPrev={table.getCanPreviousPage()}
+          canNext={table.getCanNextPage()}
+          previousPage={() => table.previousPage()}
+          nextPage={() => table.nextPage()}
+        />
+      </div>
     </div>
   );
 }
+
+type PaginationProps = {
+  pageSize: number;
+  totalCount: number;
+  pageIndex: number;
+  canPrev: boolean;
+  canNext: boolean;
+  nextPage: () => void;
+  previousPage: () => void;
+  goToPage: (page: number) => void;
+};
+
+const Pagination = ({
+  pageIndex,
+  pageSize,
+  totalCount,
+  canPrev,
+  canNext,
+  nextPage,
+  previousPage,
+  goToPage,
+}: PaginationProps) => {
+  const paginationRange = usePagination({
+    currentPage: pageIndex + 1,
+    pageSize,
+    totalCount,
+    siblingCount: 2,
+  });
+
+  return (
+    <div className="flex items-center justify-between bg-white px-4 py-3 sm:px-6">
+      <div className="flex flex-1 justify-between sm:hidden">
+        <button
+          disabled={!canPrev}
+          onClick={previousPage}
+          className="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:bg-gray-100 disabled:cursor-not-allowed"
+        >
+          Previous
+        </button>
+        <button
+          disabled={!canNext}
+          onClick={nextPage}
+          className="relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:bg-gray-100 disabled:cursor-not-allowed"
+        >
+          Next
+        </button>
+      </div>
+
+      <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
+        <div>
+          <p className="text-sm text-gray-700">
+            Showing{' '}
+            <span className="font-medium">{pageSize * pageIndex + 1}</span> to{' '}
+            <span className="font-medium">{pageSize * (pageIndex + 1)}</span> of{' '}
+            <span className="font-medium">{totalCount}</span> results
+          </p>
+        </div>
+        <div>
+          <nav
+            className="isolate inline-flex -space-x-px rounded-md shadow-sm"
+            aria-label="Pagination"
+          >
+            <button
+              disabled={!canPrev}
+              onClick={previousPage}
+              className="relative inline-flex items-center rounded-l-md border border-gray-300 bg-white px-2 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50 focus:z-20
+              disabled:bg-gray-100 disabled:cursor-not-allowed"
+            >
+              <span className="sr-only">Previous</span>
+              <ChevronLeftIcon className="h-5 w-5" aria-hidden="true" />
+            </button>
+
+            {paginationRange.map((pageNumber, idx) => {
+              if (pageNumber === pageIndex + 1)
+                return (
+                  <button
+                    key={pageNumber}
+                    aria-current="page"
+                    className="relative z-10 inline-flex items-center border border-indigo-500 bg-indigo-50 px-4 py-2 text-sm font-medium text-indigo-600 focus:z-20"
+                  >
+                    {pageNumber}
+                  </button>
+                );
+
+              if (pageNumber === usePagination.DOTS)
+                return (
+                  <span
+                    key={pageNumber + idx}
+                    className="relative inline-flex items-center border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50 focus:z-20"
+                  >
+                    &#8230;
+                  </span>
+                );
+
+              return (
+                <button
+                  key={pageNumber}
+                  onClick={() => goToPage(+pageNumber - 1)}
+                  className="relative inline-flex items-center border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50 focus:z-20"
+                >
+                  {pageNumber}
+                </button>
+              );
+            })}
+
+            <button
+              disabled={!canNext}
+              onClick={nextPage}
+              className="relative inline-flex items-center rounded-r-md border border-gray-300 bg-white px-2 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50 focus:z-20 disabled:bg-gray-100 disabled:cursor-not-allowed"
+            >
+              <span className="sr-only">Next</span>
+              <ChevronRightIcon className="h-5 w-5" aria-hidden="true" />
+            </button>
+          </nav>
+        </div>
+      </div>
+    </div>
+  );
+};

@@ -29,6 +29,7 @@ import SingleDatePicker, {
 import SingleComboBox from './downshift/Combobox';
 import BasicTable from './Table/1-BasicTable';
 import TableColumnGrouping from './Table/2-TableColumnGrouping';
+import TablePagination from './Table/3-TablePagination';
 
 function App() {
   return (
@@ -51,7 +52,8 @@ function App() {
         {/* <CustomComponentsDatePickerExample /> */}
         {/* <DatePickerWithInputExample /> */}
         {/* <BasicTable /> */}
-        <TableColumnGrouping />
+        {/* <TableColumnGrouping /> */}
+        <TablePagination />
       </div>
     </div>
   );
