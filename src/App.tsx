@@ -28,6 +28,7 @@ import SingleDatePicker, {
 } from './DatePicker/DatePicker';
 import SingleComboBox from './downshift/Combobox';
 import BasicTable from './Table/1-BasicTable';
+import TableColumnGrouping from './Table/2-TableColumnGrouping';
 
 function App() {
   return (
@@ -49,7 +50,8 @@ function App() {
         {/* <ModifiersDatePickerExample /> */}
         {/* <CustomComponentsDatePickerExample /> */}
         {/* <DatePickerWithInputExample /> */}
-        <BasicTable />
+        {/* <BasicTable /> */}
+        <TableColumnGrouping />
       </div>
     </div>
   );
