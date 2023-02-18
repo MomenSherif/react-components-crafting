@@ -82,21 +82,21 @@ export default function TableServerSidePagination() {
     getCoreRowModel: getCoreRowModel(),
   });
 
+  const { pageSize, pageIndex } = pagination;
   useEffect(() => {
     axios
       .get<Comment[]>('https://jsonplaceholder.typicode.com/comments', {
         params: {
-          _page: pagination.pageIndex + 1,
-          _limit: pagination.pageSize,
+          _page: pageIndex + 1,
+          _limit: pageSize,
           q: globalFilter,
         },
       })
       .then(res => setData(res.data))
       .then(
-        () =>
-          setPageCount(Math.ceil(500 / table.getState().pagination.pageSize)), // 500 represents total data count
+        () => setPageCount(Math.ceil(500 / pageSize)), // 500 represents total data count
       );
-  }, [pagination, table, globalFilter]);
+  }, [pageSize, pageIndex, globalFilter]);
 
   console.log(table.getState());
 
@@ -145,7 +145,7 @@ export default function TableServerSidePagination() {
           onChange={value => table.setGlobalFilter(value)}
         />
         <button
-          onClick={() => table.resetGlobalFilter()}
+          onClick={() => table.setGlobalFilter('')}
           className="p-3 rounded-lg bg-red-500/20 border border-red-500/50 text-red-500"
         >
           <XIcon className="w-5 h-5" aria-hidden="true" />
