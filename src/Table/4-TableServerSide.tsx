@@ -5,7 +5,9 @@ import {
   flexRender,
   getCoreRowModel,
   getPaginationRowModel,
+  getSortedRowModel,
   PaginationState,
+  SortingState,
   useReactTable,
   VisibilityState,
 } from '@tanstack/react-table';
@@ -30,6 +32,7 @@ const columns = [
   columnHelper.accessor('id', {
     header: 'ID',
     size: 40,
+    enableSorting: true,
   }),
   columnHelper.accessor('name', {
     header: 'Name',
@@ -44,16 +47,26 @@ const columns = [
     header: 'Comment',
     cell: info => <i>{info.getValue()}</i>,
     size: 400,
+    meta: {
+      // we can pass meta data to define filter type component for <Filters />
+      filter: 'string',
+    },
   }),
 ];
 
-export default function TableServerSidePagination() {
+const defaultColumn: Partial<ColumnDef<Comment>> = {
+  enableSorting: false,
+  enableMultiSort: false,
+};
+
+export default function TableServerSide() {
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [columnOrder, setColumnOrder] = useState<ColumnOrderState>([]);
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: 5,
   });
+  const [sorting, setSorting] = useState<SortingState>([]);
   const [globalFilter, setGlobalFilter] = useState('');
   const [pageCount, setPageCount] = useState<number>(-1);
 
@@ -67,7 +80,9 @@ export default function TableServerSidePagination() {
       columnOrder,
       pagination,
       globalFilter,
+      sorting,
     },
+    defaultColumn,
     pageCount, // should be fetched from the backend (but json placeholder doesn't response with total || pageCount)
     onColumnVisibilityChange: setColumnVisibility,
     onColumnOrderChange: setColumnOrder,
@@ -76,9 +91,13 @@ export default function TableServerSidePagination() {
       setGlobalFilter(globalFilter); // use complex state to combine pagination, sorting and global filter with useReducer
       setPagination(prev => ({ ...prev, pageIndex: 0 }));
     },
+    onSortingChange: sorting => {
+      setSorting(sorting);
+      setPagination(prev => ({ ...prev, pageIndex: 0 }));
+    },
     manualPagination: true,
     manualFiltering: true,
-    getPaginationRowModel: getPaginationRowModel(),
+    manualSorting: true, // disabled getSortedRowModel() if defined for client side
     getCoreRowModel: getCoreRowModel(),
   });
 
@@ -90,13 +109,16 @@ export default function TableServerSidePagination() {
           _page: pageIndex + 1,
           _limit: pageSize,
           q: globalFilter,
+          _sort: sorting.length > 0 ? sorting[0].id : undefined,
+          _order:
+            sorting.length > 0 ? (sorting[0].desc ? 'desc' : 'asc') : undefined,
         },
       })
       .then(res => setData(res.data))
       .then(
         () => setPageCount(Math.ceil(500 / pageSize)), // 500 represents total data count
       );
-  }, [pageSize, pageIndex, globalFilter]);
+  }, [pageSize, pageIndex, sorting, globalFilter]);
 
   console.log(table.getState());
 
@@ -164,12 +186,17 @@ export default function TableServerSidePagination() {
                   <th
                     key={header.id}
                     colSpan={header.colSpan}
-                    className="py-4 px-4 text-left text-sm font-semibold text-gray-900 border-b"
+                    className={`relative py-4 px-4 text-left text-sm font-semibold text-gray-900 border-b ${
+                      header.column.getCanSort()
+                        ? 'cursor-pointer select-none'
+                        : ''
+                    }`}
                     style={{
                       // Fixed column width hack
                       width:
                         header.getSize() !== 150 ? header.getSize() : undefined,
                     }}
+                    onClick={header.column.getToggleSortingHandler()}
                   >
                     {header.isPlaceholder
                       ? null
@@ -177,6 +204,10 @@ export default function TableServerSidePagination() {
                           header.column.columnDef.header,
                           header.getContext(),
                         )}
+                    <span className="absolute ml-4">
+                      {header.column.getIsSorted() === 'asc' && '🔼'}
+                      {header.column.getIsSorted() === 'desc' && '🔽'}
+                    </span>
                   </th>
                 ))}
               </tr>

@@ -30,7 +30,7 @@ import SingleComboBox from './downshift/Combobox';
 import BasicTable from './Table/1-BasicTable';
 import TableColumnGrouping from './Table/2-TableColumnGrouping';
 import TablePagination from './Table/3-TablePagination';
-import TableServerSidePagination from './Table/4-TableServerSidePagination';
+import TableServerSide from './Table/4-TableServerSide';
 
 function App() {
   return (
@@ -55,7 +55,7 @@ function App() {
         {/* <BasicTable /> */}
         {/* <TableColumnGrouping /> */}
         {/* <TablePagination /> */}
-        <TableServerSidePagination />
+        <TableServerSide />
       </div>
     </div>
   );
