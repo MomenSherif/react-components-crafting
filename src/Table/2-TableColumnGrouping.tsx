@@ -1,4 +1,10 @@
-import { randFirstName, randLastName, rand, randNumber } from '@ngneat/falso';
+import {
+  randFirstName,
+  randLastName,
+  rand,
+  randNumber,
+  randLines,
+} from '@ngneat/falso';
 import {
   ColumnDef,
   ColumnOrderState,
@@ -14,6 +20,7 @@ import shuffle from '../utils/shuffle';
 type Person = {
   firstName: string;
   lastName: string;
+  paragraph: string;
   age: number;
   visits: number;
   status: string;
@@ -23,6 +30,7 @@ type Person = {
 const data: Person[] = Array.from({ length: 20 }).map(() => ({
   firstName: randFirstName(),
   lastName: randLastName(),
+  paragraph: randLines(),
   age: randNumber({ min: 18, max: 80 }),
   progress: randNumber({ min: 0, max: 100 }),
   status: rand(['In Relationship', 'Single', 'Married', 'Complicated']),
@@ -48,10 +56,17 @@ const columns: ColumnDef<Person, unknown>[] = [
         header: info => <span>Last Name</span>,
         footer: info => info.column.id,
       }),
+      columnHelper.accessor('paragraph', {
+        cell: info => <i>{info.getValue()}</i>,
+        header: info => <span>Random Text</span>,
+        footer: info => info.column.id,
+        minSize: 400,
+      }),
       columnHelper.accessor('age', {
         header: info => 'Age',
         cell: info => info.renderValue(),
         footer: info => info.column.id,
+        size: 100,
       }),
       columnHelper.accessor('status', {
         header: 'Status',
@@ -146,7 +161,7 @@ export default function TableColumnGrouping() {
       </div>
 
       <div
-        className={`min-w-full overflow-x-auto rounded-lg ${
+        className={`w-full overflow-x-auto rounded-lg ${
           table.getIsSomeColumnsVisible() ? 'border' : ''
         }`}
       >
@@ -158,7 +173,8 @@ export default function TableColumnGrouping() {
                   <th
                     key={header.id}
                     colSpan={header.colSpan}
-                    className="py-4 px-4 text-left text-sm font-semibold text-gray-900 whitespace-nowrap border-b"
+                    className="py-4 px-4 text-left text-sm font-semibold text-gray-900 border-b"
+                    style={{ width: header.getSize() }}
                   >
                     {header.isPlaceholder
                       ? null
@@ -176,7 +192,11 @@ export default function TableColumnGrouping() {
             {table.getRowModel().rows.map(row => (
               <tr key={row.id}>
                 {row.getVisibleCells().map(cell => (
-                  <td key={cell.id} className="py-4 px-4 text-left text-sm">
+                  <td
+                    key={cell.id}
+                    className="py-4 px-4 text-left text-sm"
+                    style={{ width: cell.column.getSize() }}
+                  >
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </td>
                 ))}
@@ -191,7 +211,8 @@ export default function TableColumnGrouping() {
                   <th
                     key={header.id}
                     colSpan={header.colSpan}
-                    className="py-4 px-4 text-left text-sm font-semibold text-gray-900 whitespace-nowrap border-t"
+                    className="py-4 px-4 text-left text-sm font-semibold text-gray-900 border-t"
+                    style={{ width: header.getSize() }}
                   >
                     {header.isPlaceholder
                       ? null
