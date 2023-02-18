@@ -27,10 +27,11 @@ import SingleDatePicker, {
   RangeDatePicker,
 } from './DatePicker/DatePicker';
 import SingleComboBox from './downshift/Combobox';
+import BasicTable from './Table/1-BasicTable';
 
 function App() {
   return (
-    <div className="h-[8000px]">
+    <div className="">
       <h1 className="text-7xl font-bold text-center">Hello, World!</h1>
 
       <div className="m-20 flex justify-center">
@@ -39,7 +40,7 @@ function App() {
         {/* <PopoverExample /> */}
         {/* <DialogExample /> */}
         {/* <SelectDownshift /> */}
-        <SingleComboBox />
+        {/* <SingleComboBox /> */}
         {/* <SelectDownshiftMultiple /> */}
         {/* <SingleDatePicker /> */}
         {/* <DatePickerCustomized /> */}
@@ -48,6 +49,7 @@ function App() {
         {/* <ModifiersDatePickerExample /> */}
         {/* <CustomComponentsDatePickerExample /> */}
         {/* <DatePickerWithInputExample /> */}
+        <BasicTable />
       </div>
     </div>
   );
