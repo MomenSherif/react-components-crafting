@@ -7,16 +7,34 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   PaginationState,
+  RowSelectionState,
   SortingState,
   useReactTable,
   VisibilityState,
 } from '@tanstack/react-table';
-import { useEffect, useRef, useState } from 'react';
+import { HTMLProps, useEffect, useRef, useState } from 'react';
 import { ChevronLeftIcon, ChevronRightIcon, XIcon } from 'lucide-react';
 import axios from 'axios';
 import shuffle from '../utils/shuffle';
 import usePagination from '../hooks/usePagination';
 import useDidUpdate from '../hooks/useDidUpdate';
+
+const IndeterminateCheckbox = ({
+  indeterminate,
+  ...props
+}: { indeterminate: boolean } & HTMLProps<HTMLInputElement>) => {
+  const ref = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (typeof indeterminate === 'boolean' && ref.current) {
+      ref.current.indeterminate = indeterminate;
+    }
+  }, [indeterminate]);
+
+  return (
+    <input ref={ref} type="checkbox" className="cursor-pointer" {...props} />
+  );
+};
 
 type Comment = {
   postId: number;
@@ -29,6 +47,31 @@ type Comment = {
 const columnHelper = createColumnHelper<Comment>();
 
 const columns = [
+  columnHelper.display({
+    id: 'select',
+    header: ({ table }) => (
+      <div className="flex justify-center items-center">
+        <IndeterminateCheckbox
+          checked={table?.getIsAllRowsSelected()}
+          disabled={!table?.options.enableRowSelection}
+          indeterminate={table?.getIsSomeRowsSelected()}
+          onChange={table?.getToggleAllRowsSelectedHandler()}
+        />
+      </div>
+    ),
+    cell: ({ row }) => (
+      <div className="flex justify-center items-center">
+        <IndeterminateCheckbox
+          checked={row.getIsSelected()}
+          disabled={!row.getCanSelect()}
+          indeterminate={row.getIsSomeSelected()} // for nested selection
+          onChange={row.getToggleSelectedHandler()}
+        />
+      </div>
+    ),
+    size: 10,
+    maxSize: 10,
+  }),
   columnHelper.accessor('id', {
     header: 'ID',
     size: 40,
@@ -67,6 +110,7 @@ export default function TableServerSide() {
     pageSize: 5,
   });
   const [sorting, setSorting] = useState<SortingState>([]);
+  const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
   const [globalFilter, setGlobalFilter] = useState('');
   const [pageCount, setPageCount] = useState<number>(-1);
 
@@ -81,24 +125,33 @@ export default function TableServerSide() {
       pagination,
       globalFilter,
       sorting,
+      rowSelection,
     },
     defaultColumn,
     pageCount, // should be fetched from the backend (but json placeholder doesn't response with total || pageCount)
     onColumnVisibilityChange: setColumnVisibility,
     onColumnOrderChange: setColumnOrder,
-    onPaginationChange: setPagination,
+    onRowSelectionChange: setRowSelection,
+    onPaginationChange: pagination => {
+      setPagination(pagination);
+      table.resetRowSelection();
+    },
     onGlobalFilterChange: globalFilter => {
       setGlobalFilter(globalFilter); // use complex state to combine pagination, sorting and global filter with useReducer
       setPagination(prev => ({ ...prev, pageIndex: 0 }));
+      table.resetRowSelection();
     },
     onSortingChange: sorting => {
       setSorting(sorting);
       setPagination(prev => ({ ...prev, pageIndex: 0 }));
+      table.resetRowSelection();
     },
     manualPagination: true,
     manualFiltering: true,
     manualSorting: true, // disabled getSortedRowModel() if defined for client side
     getCoreRowModel: getCoreRowModel(),
+    enableRowSelection: true,
+    getRowId: row => `${row.id}`,
   });
 
   const { pageSize, pageIndex } = pagination;
@@ -121,6 +174,7 @@ export default function TableServerSide() {
   }, [pageSize, pageIndex, sorting, globalFilter]);
 
   console.log(table.getState());
+  console.log(table.getSelectedRowModel().rows);
 
   return (
     <div className="w-full flex flex-col space-y-2 items-start">
