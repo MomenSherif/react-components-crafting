@@ -31,6 +31,7 @@ import BasicTable from './Table/1-BasicTable';
 import TableColumnGrouping from './Table/2-TableColumnGrouping';
 import TablePagination from './Table/3-TablePagination';
 import TableServerSide from './Table/4-TableServerSide';
+import CMDK from './CMDK/CMDK';
 
 function App() {
   return (
@@ -55,7 +56,8 @@ function App() {
         {/* <BasicTable /> */}
         {/* <TableColumnGrouping /> */}
         {/* <TablePagination /> */}
-        <TableServerSide />
+        {/* <TableServerSide /> */}
+        <CMDK />
       </div>
     </div>
   );
