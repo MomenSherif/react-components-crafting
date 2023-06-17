@@ -30,6 +30,7 @@ import {
   useInteractions,
   useMergeRefs,
   useRole,
+  size,
   type Placement,
 } from '@floating-ui/react';
 
@@ -90,6 +91,13 @@ export function usePopover(options: PopoverOptions = {}) {
     placement,
     middleware: [
       offset(5),
+      size({
+        apply({ availableWidth, availableHeight, elements }) {
+          Object.assign(elements.floating.style, {
+            width: `${elements.reference.getBoundingClientRect().width}px`,
+          });
+        },
+      }),
       flip({
         fallbackAxisSideDirection: 'end',
       }),
@@ -136,6 +144,8 @@ const PopoverContext = createContext<PopoverContextType>(null);
 
 export const usePopoverContext = () => {
   const context = useContext(PopoverContext);
+
+  console.log(context);
 
   if (context === null) {
     throw new Error('Popover components must be wrapped in <Popover />');
@@ -238,7 +248,11 @@ export const PopoverContent = forwardRef<
   if (!context.isOpen) return null;
 
   return (
-    <FloatingFocusManager context={context.context} modal={context.modal}>
+    <FloatingFocusManager
+      context={context.context}
+      modal={context.modal}
+      initialFocus={-1} // for example combobox to control their focus management
+    >
       <div
         ref={ref}
         style={{

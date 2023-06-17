@@ -43,7 +43,7 @@ function App() {
         {/* <ToolTipReusable /> */}
         {/* <PopoverExample /> */}
         {/* <DialogExample /> */}
-        {/* <SelectDownshift /> */}
+        <SelectDownshift />
         {/* <SingleComboBox /> */}
         {/* <SelectDownshiftMultiple /> */}
         {/* <SingleDatePicker /> */}
@@ -57,7 +57,7 @@ function App() {
         {/* <TableColumnGrouping /> */}
         {/* <TablePagination /> */}
         {/* <TableServerSide /> */}
-        <CMDK />
+        {/* <CMDK /> */}
       </div>
     </div>
   );

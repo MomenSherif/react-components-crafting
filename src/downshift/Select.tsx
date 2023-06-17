@@ -4,6 +4,12 @@ import {
   UseSelectStateChangeOptions,
 } from 'downshift';
 import { useState } from 'react';
+import {
+  Popover,
+  PopoverContent,
+  PopoverPortal,
+  PopoverTrigger,
+} from '../Popover/PopoverExample';
 
 const books = [
   { author: 'Harper Lee', title: 'To Kill a Mockingbird' },
@@ -17,7 +23,7 @@ const books = [
   { author: 'Lev Tolstoy', title: 'Anna Karenina' },
   { author: 'Fyodor Dostoevsky', title: 'Crime and Punishment' },
 ];
-type Book = typeof books[number];
+type Book = (typeof books)[number];
 
 const itemToString = (item: Book | null) => {
   return item?.title || '';
@@ -139,8 +145,10 @@ export default function SelectDownshift() {
     null,
   );
 
+  const [isOpen, setIsOpen] = useState(true);
+
   const {
-    isOpen,
+    // isOpen,
     // selectedItem,
     getToggleButtonProps,
     getLabelProps,
@@ -148,49 +156,58 @@ export default function SelectDownshift() {
     highlightedIndex,
     getItemProps,
   } = useSelect({
+    isOpen,
     items: books,
     itemToString,
     selectedItem,
+    onIsOpenChange: ({ isOpen }) => setIsOpen(!!isOpen),
     onSelectedItemChange: ({ selectedItem }) => {
       setSelectedItem(selectedItem);
     },
   });
 
   return (
-    <div className="w-72 relative">
-      <div className="flex flex-col gap-2">
-        <label {...getLabelProps()} className="text-gray-800">
-          Choose your favorite book:
-        </label>
+    <Popover open={isOpen} onOpenChange={setIsOpen}>
+      <div className="w-96 relative mt-20">
+        <div className="flex flex-col gap-2">
+          <label {...getLabelProps()} className="text-gray-800">
+            Choose your favorite book:
+          </label>
+          <PopoverTrigger asChild>
+            <div
+              {...getToggleButtonProps()}
+              className="px-3 py-2 bg-white flex justify-between cursor-pointer border rounded-md focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/20 focus:outline-none"
+            >
+              <span>{selectedItem ? selectedItem.title : 'Elements'}</span>
+              <span className="px-2">
+                {isOpen ? <>&#8593;</> : <>&#8595;</>}
+              </span>
+            </div>
+          </PopoverTrigger>
+        </div>
+
         <div
-          {...getToggleButtonProps()}
-          className="px-3 py-2 bg-white flex justify-between cursor-pointer border rounded-md focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/20 focus:outline-none"
+          {...getMenuProps()}
+          className={` ${isOpen && books.length ? '' : 'hidden'}`}
         >
-          <span>{selectedItem ? selectedItem.title : 'Elements'}</span>
-          <span className="px-2">{isOpen ? <>&#8593;</> : <>&#8595;</>}</span>
+          <PopoverPortal>
+            <PopoverContent className="mt-2 py-1 rounded-md shadow-md max-h-80 overflow-y-auto w-full divide-y divide-gray-100">
+              {books.map((item, index) => (
+                <li
+                  key={`${item.title}${index}`}
+                  {...getItemProps({ item, index })}
+                  className={`px-3 py-2  flex flex-col ${
+                    highlightedIndex === index ? 'bg-gray-100' : ''
+                  } ${selectedItem === item ? 'font-medium' : ''}`}
+                >
+                  <span>{item.title}</span>
+                  <span className="text-sm text-gray-700">{item.author}</span>
+                </li>
+              ))}
+            </PopoverContent>
+          </PopoverPortal>
         </div>
       </div>
-
-      <ul
-        {...getMenuProps()}
-        className={`absolute top-full mt-2 py-1 rounded-md shadow-md max-h-80 overflow-y-auto w-full divide-y divide-gray-100 ${
-          isOpen && books.length ? '' : 'hidden'
-        }`}
-      >
-        {isOpen &&
-          books.map((item, index) => (
-            <li
-              key={`${item.title}${index}`}
-              {...getItemProps({ item, index })}
-              className={`px-3 py-2  flex flex-col ${
-                highlightedIndex === index ? 'bg-gray-100' : ''
-              } ${selectedItem === item ? 'font-medium' : ''}`}
-            >
-              <span>{item.title}</span>
-              <span className="text-sm text-gray-700">{item.author}</span>
-            </li>
-          ))}
-      </ul>
-    </div>
+    </Popover>
   );
 }
